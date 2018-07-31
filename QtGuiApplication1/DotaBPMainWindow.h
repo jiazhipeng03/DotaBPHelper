@@ -19,6 +19,20 @@ struct RelatedHero
 	string BestTeammate[HEROCOUNT];
 };
 
+enum BPType
+{
+	MyPick,
+	OpPick,
+	MyBan,
+	OpBan,
+};
+struct BPSequence
+{
+	BPType type;
+	int index;
+	BPSequence(BPType InType = MyPick, int InIndex = 0) :type(InType), index(InIndex) {};
+};
+
 class DotaBPMainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -45,4 +59,6 @@ private:
 	map<string, int> m_BanList;
 
 	map<string, RelatedHero> m_HeroTable;
+
+	vector<BPSequence> m_BPSequence;
 };

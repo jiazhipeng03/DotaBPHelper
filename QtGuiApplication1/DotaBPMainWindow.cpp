@@ -36,6 +36,34 @@ DotaBPMainWindow::DotaBPMainWindow(QWidget *parent)
 	}
 	InitConnection();
 	RefreshTable();
+	
+	m_BPSequence.push_back(BPSequence(MyBan, 1));
+	m_BPSequence.push_back(BPSequence(OpBan, 1));
+	m_BPSequence.push_back(BPSequence(MyBan, 2));
+	m_BPSequence.push_back(BPSequence(OpBan, 2));
+	m_BPSequence.push_back(BPSequence(MyBan, 3));
+	m_BPSequence.push_back(BPSequence(OpBan, 3));
+
+	m_BPSequence.push_back(BPSequence(MyPick, 1));
+	m_BPSequence.push_back(BPSequence(OpPick, 1));
+	m_BPSequence.push_back(BPSequence(OpPick, 2));
+	m_BPSequence.push_back(BPSequence(MyPick, 2));
+
+	m_BPSequence.push_back(BPSequence(MyBan, 4));
+	m_BPSequence.push_back(BPSequence(OpBan, 4));
+	m_BPSequence.push_back(BPSequence(MyBan, 5));
+	m_BPSequence.push_back(BPSequence(OpBan, 5));
+
+	m_BPSequence.push_back(BPSequence(OpPick, 3));
+	m_BPSequence.push_back(BPSequence(MyPick, 3));
+	m_BPSequence.push_back(BPSequence(OpPick, 4));
+	m_BPSequence.push_back(BPSequence(MyPick, 4));
+
+	m_BPSequence.push_back(BPSequence(OpBan, 6));
+	m_BPSequence.push_back(BPSequence(MyBan, 6));
+
+	m_BPSequence.push_back(BPSequence(MyPick, 5));
+	m_BPSequence.push_back(BPSequence(OpPick, 5));
 }
 
 void DotaBPMainWindow::InitConnection()
