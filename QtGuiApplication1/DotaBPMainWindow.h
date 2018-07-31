@@ -9,12 +9,16 @@
 #include <fstream>
 #include <sstream>
 using namespace std;
-struct Hero
+#define HEROCOUNT 5
+#define BANCOUNT 12
+
+struct RelatedHero
 {
-	string BestVersus[5];
-	string WorstVersus[5];
-	string BestTeammate[5];
+	string BestVersus[HEROCOUNT];
+	string WorstVersus[HEROCOUNT];
+	string BestTeammate[HEROCOUNT];
 };
+
 class DotaBPMainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -26,10 +30,19 @@ public:
 	public slots:
 	void OnEditFinished();
 	void LoadCSV(const char* filename, vector<vector<string>>& OutTable);
+	// 读取己方所有的已有英雄，列举关系英雄并记录次数排序，如果在ban中的英雄则跳过
 	void RefreshTable();
 	void LoadXML(const char* filename);
+	void GetHeroList();
 private:
 	Ui::DotaBPMainWindowClass ui;
 
-	map<string, Hero> m_HeroTable;
+	QLineEdit* m_MyTeamEdit[HEROCOUNT];
+	QLineEdit* m_OpEdit[HEROCOUNT];
+	QLineEdit* m_BannedEdit[BANCOUNT];
+	
+	map<string, int> m_PickList;
+	map<string, int> m_BanList;
+
+	map<string, RelatedHero> m_HeroTable;
 };

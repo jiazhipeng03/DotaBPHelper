@@ -6,21 +6,52 @@ DotaBPMainWindow::DotaBPMainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
-	InitConnection();
+	
  	const char* filename = "new.xml";
 	std::string appPath = qApp->applicationDirPath().toStdString() + "/" + filename;
 // 	LoadCSV(filename, m_HeroTable);
 	LoadXML(appPath.c_str());
+	
+
+	for (int i = 0; i < HEROCOUNT; ++i)
+	{
+		m_MyTeamEdit[i] = NULL;
+		QString childName("lineEdit_My");
+		childName += QString::number(i+1);
+		m_MyTeamEdit[i] = (ui.centralWidget->findChild<QLineEdit*>(childName));
+	}
+	for (int i = 0; i < HEROCOUNT; ++i)
+	{
+		m_OpEdit[i] = NULL;
+		QString childName("lineEdit_Op");
+		childName += QString::number(i + 1);
+		m_OpEdit[i] = (ui.centralWidget->findChild<QLineEdit*>(childName));
+	}
+	for (int i = 0; i < BANCOUNT; ++i)
+	{
+		m_BannedEdit[i] = NULL;
+		QString childName("lineEdit_Ban");
+		childName += QString::number(i + 1);
+		m_BannedEdit[i] = (ui.centralWidget->findChild<QLineEdit*>(childName));
+	}
+	InitConnection();
 	RefreshTable();
 }
 
 void DotaBPMainWindow::InitConnection()
 {
-	connect(ui.lineEdit_My1, SIGNAL(editingFinished()), this, SLOT(OnEditFinished()));
+	for (int i = 0; i < HEROCOUNT; ++i)
+	{
+		connect(m_MyTeamEdit[i], SIGNAL(editingFinished()), this, SLOT(OnEditFinished()));
+		connect(m_OpEdit[i], SIGNAL(editingFinished()), this, SLOT(OnEditFinished()));
+	}
+	for (int i=0; i<BANCOUNT; ++i)
+		connect(m_BannedEdit[i], SIGNAL(editingFinished()), this, SLOT(OnEditFinished()));
+
 // 	connect(ui.lineEdit_My2, SIGNAL(editingFinished()), this, SLOT(OnEditFinished()));
 // 	connect(ui.lineEdit_My3, SIGNAL(editingFinished()), this, SLOT(OnEditFinished()));
 // 	connect(ui.lineEdit_My4, SIGNAL(editingFinished()), this, SLOT(OnEditFinished()));
-// 	connect(ui.lineEdit_My5, SIGNAL(editingFinished()), this, SLOT(OnEditFinished()));
+// 	connect(ui.lineEdit_MyHEROCOUNT, SIGNAL(editingFinished()), this, SLOT(OnEditFinished()));
 }
 
 void DotaBPMainWindow::OnEditFinished()
@@ -54,23 +85,36 @@ void DotaBPMainWindow::RefreshTable()
 {
 	QStandardItemModel* dataModel = new QStandardItemModel;
 	ui.tableView->setModel(dataModel);
-	dataModel->setHorizontalHeaderItem(0, new QStandardItem(QString::fromLocal8Bit("克制")));
-	dataModel->setHorizontalHeaderItem(1, new QStandardItem(QString::fromLocal8Bit("被克制")));
-	dataModel->setHorizontalHeaderItem(2, new QStandardItem(QString::fromLocal8Bit("队友")));
-	// Load current hero
-	string hero = ui.lineEdit_My1->text().toUtf8();
-	int row = 0;
-	if (m_HeroTable.find(hero) == m_HeroTable.end())
-		return;
+	dataModel->setHorizontalHeaderItem(0, new QStandardItem(QString::fromLocal8Bit("Pick")));
+	dataModel->setHorizontalHeaderItem(1, new QStandardItem(QString::fromLocal8Bit("Ban")));
+	//dataModel->setHorizontalHeaderItem(2, new QStandardItem(QString::fromLocal8Bit("队友")));
 
-	for (int i = 0; i < 5; ++i)
+	GetHeroList();
+
+	if (m_PickList.empty() && m_BanList.empty())
+		return;
+	
+	typedef std::pair<string, int> PAIR;
+	struct CmpByValue
 	{
-		QString qHero = QString::fromUtf8(m_HeroTable[hero].BestVersus[i].c_str());
-		dataModel->setItem(i, 0, new QStandardItem(qHero));
-		qHero = QString::fromUtf8(m_HeroTable[hero].WorstVersus[i].c_str());
-		dataModel->setItem(i, 1, new QStandardItem(qHero));
-		qHero = QString::fromUtf8(m_HeroTable[hero].BestTeammate[i].c_str());
-		dataModel->setItem(i, 2, new QStandardItem(qHero));
+		bool operator()(const PAIR& lhs, const PAIR& rhs) const
+		{
+			return lhs.second > rhs.second;
+		}
+	};
+	vector<PAIR> PickList(m_PickList.begin(), m_PickList.end());
+	sort(PickList.begin(), PickList.end(), CmpByValue());
+	for (int i=0; i<PickList.size(); ++i)
+	{
+		string name = PickList[i].first;
+		dataModel->setItem(i, 0, new QStandardItem(QString::fromUtf8(name.c_str())));
+	}
+	vector<PAIR> BanList(m_BanList.begin(), m_BanList.end());
+	sort(BanList.begin(), BanList.end(), CmpByValue());
+	for (int i = 0; i < BanList.size(); ++i)
+	{
+		string name = BanList[i].first;
+		dataModel->setItem(i, 1, new QStandardItem(QString::fromUtf8(name.c_str())));
 	}
 }
 
@@ -89,7 +133,7 @@ void DotaBPMainWindow::LoadXML(const char* filename)
 		xml_node<>* bestVNode = heroNode->first_node("BestVersus");
 		while (bestVNode)
 		{
-			Hero& h = m_HeroTable[heroName];
+			RelatedHero& h = m_HeroTable[heroName];
 			h.BestVersus[i] = bestVNode->value();
 			bestVNode = bestVNode->next_sibling("BestVersus");
 			++i;
@@ -99,7 +143,7 @@ void DotaBPMainWindow::LoadXML(const char* filename)
 		xml_node<>* WorstVersusNode = heroNode->first_node("WorstVersus");
 		while (WorstVersusNode)
 		{
-			Hero& h = m_HeroTable[heroName];
+			RelatedHero& h = m_HeroTable[heroName];
 			h.WorstVersus[i] = WorstVersusNode->value();
 			WorstVersusNode = WorstVersusNode->next_sibling("WorstVersus");
 			++i;
@@ -109,11 +153,80 @@ void DotaBPMainWindow::LoadXML(const char* filename)
 		xml_node<>* BestTeammateNode = heroNode->first_node("BestTeammate");
 		while (BestTeammateNode)
 		{
-			Hero& h = m_HeroTable[heroName];
+			RelatedHero& h = m_HeroTable[heroName];
 			h.BestTeammate[i] = BestTeammateNode->value();
 			BestTeammateNode = BestTeammateNode->next_sibling("BestTeammate");
 			++i;
 		}
 		heroNode = heroNode->next_sibling("HeroName");
+	}
+}
+
+void DotaBPMainWindow::GetHeroList()
+{
+	m_PickList.clear();
+	m_BanList.clear();
+
+	vector<string> SelectedList;
+	for (int i = 0; i < HEROCOUNT; ++i)
+	{
+		SelectedList.push_back(string(m_MyTeamEdit[i]->text().toUtf8()));
+		SelectedList.push_back(string(m_OpEdit[i]->text().toUtf8()));
+	}
+	for (int i = 0; i < BANCOUNT; ++i)
+		SelectedList.push_back(string(m_BannedEdit[i]->text().toUtf8()));
+
+	for (int i = 0; i < HEROCOUNT; ++i)
+	{
+		std::string myTeam = m_MyTeamEdit[i]->text().toUtf8();
+		if (m_HeroTable.find(myTeam) == m_HeroTable.end())
+			continue;
+		for (int j = 0; j < HEROCOUNT; ++j)
+		{
+			string bestT = m_HeroTable[myTeam].BestTeammate[j];
+			m_PickList[bestT]++;
+		}
+		for (int j = 0; j < HEROCOUNT; ++j)
+		{
+			string bestT = m_HeroTable[myTeam].WorstVersus[j];
+			m_BanList[bestT]++;
+		}
+		for (int j = 0; j < HEROCOUNT; ++j)
+		{
+			string bestT = m_HeroTable[myTeam].BestVersus[j];
+			m_PickList[bestT]++;
+		}
+	}
+	for (int i = 0; i < HEROCOUNT; ++i)
+	{
+		std::string opTeam = m_OpEdit[i]->text().toUtf8();
+		if (m_HeroTable.find(opTeam) == m_HeroTable.end())
+			continue;
+		for (int j = 0; j < HEROCOUNT; ++j)
+		{
+			string bestT = m_HeroTable[opTeam].BestTeammate[j];
+			m_BanList[bestT]++;
+		}
+		for (int j = 0; j < HEROCOUNT; ++j)
+		{
+			string bestT = m_HeroTable[opTeam].WorstVersus[j];
+			m_PickList[bestT]++;
+		}
+		for (int j = 0; j < HEROCOUNT; ++j)
+		{
+			string bestT = m_HeroTable[opTeam].BestVersus[j];
+			m_BanList[bestT]++;
+		}
+	}
+	for (auto it : SelectedList)
+	{
+		if (m_PickList.find(it) != m_PickList.end())
+		{
+			m_PickList.erase(it);
+		}
+		if (m_BanList.find(it) != m_BanList.end())
+		{
+			m_BanList.erase(it);
+		}
 	}
 }
