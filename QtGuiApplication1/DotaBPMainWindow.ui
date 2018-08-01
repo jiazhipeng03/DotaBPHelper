@@ -19,7 +19,7 @@
      <rect>
       <x>80</x>
       <y>170</y>
-      <width>111</width>
+      <width>113</width>
       <height>20</height>
      </rect>
     </property>
@@ -27,7 +27,7 @@
    <widget class="QLineEdit" name="lineEdit_DirePick1">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>260</x>
       <y>170</y>
       <width>113</width>
       <height>20</height>
@@ -48,32 +48,38 @@
     <property name="geometry">
      <rect>
       <x>80</x>
-      <y>40</y>
-      <width>71</width>
+      <y>30</y>
+      <width>111</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>Radiant</string>
+     <string>天辉</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>260</x>
       <y>30</y>
-      <width>101</width>
-      <height>31</height>
+      <width>111</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Dire</string>
+     <string>夜魇</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit_DirePick2">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>260</x>
       <y>200</y>
       <width>113</width>
       <height>20</height>
@@ -93,7 +99,7 @@
    <widget class="QLineEdit" name="lineEdit_DirePick3">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>260</x>
       <y>320</y>
       <width>113</width>
       <height>20</height>
@@ -113,7 +119,7 @@
    <widget class="QLineEdit" name="lineEdit_DirePick4">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>260</x>
       <y>350</y>
       <width>113</width>
       <height>20</height>
@@ -133,7 +139,7 @@
    <widget class="QLineEdit" name="lineEdit_DirePick5">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>260</x>
       <y>450</y>
       <width>113</width>
       <height>20</height>
@@ -159,7 +165,7 @@
    <widget class="QLineEdit" name="lineEdit_DireBan2">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>260</x>
       <y>100</y>
       <width>113</width>
       <height>20</height>
@@ -191,7 +197,7 @@
    <widget class="QLineEdit" name="lineEdit_DireBan1">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>260</x>
       <y>70</y>
       <width>113</width>
       <height>20</height>
@@ -236,7 +242,7 @@
    <widget class="QLineEdit" name="lineEdit_DireBan4">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>260</x>
       <y>240</y>
       <width>113</width>
       <height>20</height>
@@ -249,7 +255,7 @@
    <widget class="QLineEdit" name="lineEdit_DireBan5">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>260</x>
       <y>270</y>
       <width>113</width>
       <height>20</height>
@@ -275,7 +281,7 @@
    <widget class="QLineEdit" name="lineEdit_DireBan3">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>260</x>
       <y>130</y>
       <width>113</width>
       <height>20</height>
@@ -304,7 +310,7 @@
    <widget class="QLineEdit" name="lineEdit_DireBan6">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>260</x>
       <y>400</y>
       <width>113</width>
       <height>20</height>
@@ -318,9 +324,9 @@
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>120</y>
+      <y>100</y>
       <width>331</width>
-      <height>351</height>
+      <height>371</height>
      </rect>
     </property>
    </widget>
@@ -420,18 +426,83 @@
      <string>Pick</string>
     </property>
    </widget>
-   <widget class="QGroupBox" name="groupBox">
+   <widget class="QGroupBox" name="groupBox_Team">
     <property name="geometry">
      <rect>
       <x>430</x>
       <y>10</y>
-      <width>311</width>
+      <width>151</width>
       <height>71</height>
      </rect>
     </property>
     <property name="title">
-     <string>GroupBox</string>
+     <string>我方</string>
     </property>
+    <widget class="QRadioButton" name="radio_Radiant">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>89</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>天辉</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radio_Dire">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>30</y>
+       <width>89</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>夜魇</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_First">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>10</y>
+      <width>151</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>是否先选</string>
+    </property>
+    <widget class="QRadioButton" name="radio_First">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>89</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>先选</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radio_Second">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>30</y>
+       <width>89</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>后选</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
