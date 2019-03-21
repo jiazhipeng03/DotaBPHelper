@@ -12,27 +12,36 @@ DotaBPMainWindow::DotaBPMainWindow(QWidget *parent)
 // 	LoadCSV(filename, m_HeroTable);
 	LoadXML(appPath.c_str());
 	
-
+	
 	for (int i = 0; i < HEROCOUNT; ++i)
 	{
-		m_MyTeamEdit[i] = NULL;
-		QString childName("lineEdit_My");
+		m_RadPick[i] = NULL;
+		QString childName("lineEdit_RadPick");
 		childName += QString::number(i+1);
-		m_MyTeamEdit[i] = (ui.centralWidget->findChild<QLineEdit*>(childName));
+		m_RadPick[i] = (ui.centralWidget->findChild<QLineEdit*>(childName));
 	}
 	for (int i = 0; i < HEROCOUNT; ++i)
 	{
-		m_OpEdit[i] = NULL;
-		QString childName("lineEdit_Op");
+		m_DirePick[i] = NULL;
+		QString childName("lineEdit_DirePick");
 		childName += QString::number(i + 1);
-		m_OpEdit[i] = (ui.centralWidget->findChild<QLineEdit*>(childName));
+		m_DirePick[i] = (ui.centralWidget->findChild<QLineEdit*>(childName));
 	}
 	for (int i = 0; i < BANCOUNT; ++i)
 	{
-		m_BannedEdit[i] = NULL;
-		QString childName("lineEdit_Ban");
-		childName += QString::number(i + 1);
-		m_BannedEdit[i] = (ui.centralWidget->findChild<QLineEdit*>(childName));
+		if (i < BANCOUNT / 2)
+		{
+			m_BannedEdit[i] = NULL;
+			QString childName("lineEdit_RadBan");
+			childName += QString::number(i + 1);
+			m_BannedEdit[i] = (ui.centralWidget->findChild<QLineEdit*>(childName));
+		}
+		else
+		{
+			QString childName = ("lineEdit_DireBan");
+			childName += QString::number(i - BANCOUNT / 2 + 1);
+			m_BannedEdit[i] = (ui.centralWidget->findChild<QLineEdit*>(childName));
+		}
 	}
 	InitConnection();
 	RefreshTable();
@@ -70,8 +79,8 @@ void DotaBPMainWindow::InitConnection()
 {
 	for (int i = 0; i < HEROCOUNT; ++i)
 	{
-		connect(m_MyTeamEdit[i], SIGNAL(editingFinished()), this, SLOT(OnEditFinished()));
-		connect(m_OpEdit[i], SIGNAL(editingFinished()), this, SLOT(OnEditFinished()));
+		connect(m_RadPick[i], SIGNAL(editingFinished()), this, SLOT(OnEditFinished()));
+		connect(m_DirePick[i], SIGNAL(editingFinished()), this, SLOT(OnEditFinished()));
 	}
 	for (int i=0; i<BANCOUNT; ++i)
 		connect(m_BannedEdit[i], SIGNAL(editingFinished()), this, SLOT(OnEditFinished()));
@@ -135,14 +144,17 @@ void DotaBPMainWindow::RefreshTable()
 	for (int i=0; i<PickList.size(); ++i)
 	{
 		string name = PickList[i].first;
-		dataModel->setItem(i, 0, new QStandardItem(QString::fromUtf8(name.c_str())));
+		QString qname = QString::fromUtf8(name.c_str()) + QString::number(PickList[i].second);
+		dataModel->setItem(i, 0, new QStandardItem(qname));
+
 	}
 	vector<PAIR> BanList(m_BanList.begin(), m_BanList.end());
 	sort(BanList.begin(), BanList.end(), CmpByValue());
 	for (int i = 0; i < BanList.size(); ++i)
 	{
 		string name = BanList[i].first;
-		dataModel->setItem(i, 1, new QStandardItem(QString::fromUtf8(name.c_str())));
+		QString qname = QString::fromUtf8(name.c_str()) + QString::number(BanList[i].second);
+		dataModel->setItem(i, 1, new QStandardItem(qname));
 	}
 }
 
@@ -198,15 +210,15 @@ void DotaBPMainWindow::GetHeroList()
 	vector<string> SelectedList;
 	for (int i = 0; i < HEROCOUNT; ++i)
 	{
-		SelectedList.push_back(string(m_MyTeamEdit[i]->text().toUtf8()));
-		SelectedList.push_back(string(m_OpEdit[i]->text().toUtf8()));
+		SelectedList.push_back(string(m_RadPick[i]->text().toUtf8()));
+		SelectedList.push_back(string(m_DirePick[i]->text().toUtf8()));
 	}
 	for (int i = 0; i < BANCOUNT; ++i)
 		SelectedList.push_back(string(m_BannedEdit[i]->text().toUtf8()));
 
 	for (int i = 0; i < HEROCOUNT; ++i)
 	{
-		std::string myTeam = m_MyTeamEdit[i]->text().toUtf8();
+		std::string myTeam = m_RadPick[i]->text().toUtf8();
 		if (m_HeroTable.find(myTeam) == m_HeroTable.end())
 			continue;
 		for (int j = 0; j < HEROCOUNT; ++j)
@@ -227,7 +239,7 @@ void DotaBPMainWindow::GetHeroList()
 	}
 	for (int i = 0; i < HEROCOUNT; ++i)
 	{
-		std::string opTeam = m_OpEdit[i]->text().toUtf8();
+		std::string opTeam = m_DirePick[i]->text().toUtf8();
 		if (m_HeroTable.find(opTeam) == m_HeroTable.end())
 			continue;
 		for (int j = 0; j < HEROCOUNT; ++j)

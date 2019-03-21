@@ -50,8 +50,11 @@ public:
 	void GetHeroList();
 private:
 	Ui::DotaBPMainWindowClass ui;
+	
+	QLineEdit* m_RadPick[HEROCOUNT];
+	QLineEdit* m_DirePick[HEROCOUNT];
 
-	QLineEdit* m_MyTeamEdit[HEROCOUNT];
+	QLineEdit* m_MyPick[HEROCOUNT];
 	QLineEdit* m_OpEdit[HEROCOUNT];
 	QLineEdit* m_BannedEdit[BANCOUNT];
 	
